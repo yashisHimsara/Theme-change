@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.logo {
+    font-size: 24px;
+}
+
+.w-letter {
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li {
+    cursor: pointer;
+}
+
+nav ul .active {
+    border-bottom: 2px solid white;
+}
+
+.search-icon {
+    font-size: 18px;
+}
+
+/* Monster Toggle */
+.monster-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+    position: relative;
+}
+
+.eye {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: gray;
+}
+
+.eye.off {
+    background-color: red;
+}
+
+.eye.on {
+    background-color: green;
+}
+
+.monster-mouth {
+    width: 100px;
+    height: 50px;
+    background-color: #333;
+    border-radius: 25px;
+    position: relative;
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #555;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    transition: all 0.5s ease;
+}
+
+.teeth {
+    width: 10px;
+    height: 20px;
+    background-color: white;
+    border-radius: 2px;
+    margin: 0 3px;
+}
+
+.monster-mouth:hover .toggle-btn {
+    left: 55px;
+}
+
+/* Teeth placement */
+.monster-mouth {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Track Bot */
+.track-bot {
+    width: 100px;
+    height: 100px;
+    background-color: #444;
+    left: -10%;
+    top: inherit;
+    bottom: calc(var(--sz) / -2.25);
+    transform-origin: 22% 100%;
+    transform: rotate(-5deg);
+    animation: t-bot-1 0.5s ease 0s 1 reverse;
+    animation-fill-mode: forwards;
+    position: relative;
+}
+
+/* Code Block */
+.code-block {
+    background-color: #2e2e2e;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    text-align: left;
+}
+
+pre {
+    color: #ffffff;
+    margin: 0;
+}
+
+code {
+    font-family: monospace;
+    color: #d4d4d4;
+    font-size: 14px;
+}

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day/Night Switch</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        transition: background-color 0.5s ease;
+        background-color: #1e1e2f; /* Night mode background */
+        color: #ffffff;
+        overflow: hidden;
+    }
+
+    body.morning-mode {
+        background-color: #87CEEB; /* Light blue morning sky */
+        color: #000000;
+    }
+
+    .switch-container {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .switch {
+        display: none;
+    }
+
+    .toggle {
+        width: 80px;
+        height: 40px;
+        background-color: #ddd;
+        border-radius: 40px;
+        position: relative;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .toggle:before {
+        content: '';
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #fff;
+        top: 2.5px;
+        left: 2.5px;
+        transition: left 0.3s;
+    }
+
+    .switch:checked + .toggle {
+        background-color: #ffd700; /* Morning switch color */
+    }
+
+    .switch:checked + .toggle:before {
+        left: 42.5px; /* Move circle to right on click */
+    }
+
+    .toggle-text {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        font-weight: bold;
+        transition: opacity 0.3s;
+    }
+
+    .morning {
+        left: 10px;
+        opacity: 0;
+    }
+
+    .night {
+        right: 10px;
+        opacity: 1;
+    }
+
+    .switch:checked + .toggle .morning {
+        opacity: 1;
+    }
+
+    .switch:checked + .toggle .night {
+        opacity: 0;
+    }
+
+    .moon {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #fff;
+        top: 30%;
+        left: 70%;
+    }
+
+    /* Clouds for Morning */
+    .cloud {
+        position: absolute;
+        background: whitesmoke;
+        border-radius: 50%;
+        box-shadow: 0px 0px 60px 10px blanchedalmond;
+    }
+
+    .cloud1 {
+        width: 120px;
+        height: 90px;
+        top: 20%;
+        left: 10%;
+        animation: moveClouds 20s linear infinite;
+    }
+
+    .cloud2 {
+        width: 150px;
+        height: 100px;
+        top: 30%;
+        left: 50%;
+        animation: moveClouds 25s linear infinite;
+    }
+
+    .cloud3 {
+        width: 100px;
+        height: 50px;
+        top: 50%;
+        left: 80%;
+        animation: moveClouds 30s linear infinite;
+    }
+    .cloud4 {
+        width: 110px;
+        height: 80px;
+        top: 10%;
+        left: 30%;
+        animation: moveClouds 30s linear infinite;
+    }
+    .cloud5 {
+        width: 130px;
+        height: 70px;
+        top: 7%;
+        left: 80%;
+        animation: moveClouds 30s linear infinite;
+    }
+
+    @keyframes moveClouds {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(100vw);
+        }
+    }
+
+    /* Stars for Night */
+    @keyframes twinkle {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Apply the twinkle animation to the stars */
+    .star {
+        position: absolute;
+        background: #fff;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #fff;
+        animation: twinkle 2s infinite ease-in-out; /* Added twinkle animation */
+    }
+
+    /* You can adjust the duration and timing function for each star to create a more random effect */
+    .star1 {
+        top: 20%;
+        left: 30%;
+        animation-duration: 1.5s;
+    }
+
+    .star2 {
+        top: 50%;
+        left: 60%;
+        animation-duration: 2s;
+    }
+
+    .star3 {
+        top: 70%;
+        left: 40%;
+        animation-duration: 2.5s;
+    }
+
+    .star4 {
+        top: 70%;
+        left: 40%;
+        animation-duration: 3s;
+    }
+
+    .star5 {
+        top: 60%;
+        left: 20%;
+        animation-duration: 1.8s;
+    }
+
+    .star6 {
+        top: 40%;
+        left: 40%;
+        animation-duration: 2.2s;
+    }
+
+    .star7 {
+        top: 90%;
+        left: 30%;
+        animation-duration: 2.7s;
+    }
+
+    /* Sun for Morning */
+    .sun {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: #FFD700;
+        border-radius: 50%;
+        top: 10%;
+        left: 80%;
+        box-shadow: 0 0 50px #FFD700;
+    }
+
+    /* Grass for Morning */
+    .grass {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 150px;
+        background: #228B22; /* Grass color */
+        z-index: -1;
+    }
+
+    /* Flowers for Morning */
+    .flower {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: #FF69B4;
+        border-radius: 50%;
+        bottom: 150px;
+    }
+
+    .flower::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: #FF69B4;
+        border-radius: 50%;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .flower::after {
+        content: '';
+        position: absolute;
+        width: 4px;
+        height: 20px;
+        background-color: #32CD32;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Hide elements by default */
+    .morning-element,
+    .night-element {
+        display: none;
+    }
+
+    /* Show elements based on time of day */
+    body.morning-mode .morning-element {
+        display: block;
+    }
+
+    body.night-mode .night-element {
+        display: block;
+    }
+
+</style>
+<body>
+
+<div class="switch-container">
+    <input type="checkbox" id="switch" class="switch" />
+    <label for="switch" class="toggle">
+        <span class="toggle-text morning">Morning</span>
+        <span class="toggle-text night">Night</span>
+    </label>
+</div>
+
+<div class="scene">
+    <!-- Morning elements (clouds, sun, grass, flowers) -->
+    <div class="cloud cloud1 morning-element"></div>
+    <div class="cloud cloud2 morning-element"></div>
+    <div class="cloud cloud3 morning-element"></div>
+    <div class="cloud cloud4 morning-element"></div>
+    <div class="cloud cloud5 morning-element"></div>
+    <div class="sun morning-element"></div>
+    <div class="grass morning-element"></div>
+    <div class="flower morning-element" style="left: 20%;"></div>
+    <div class="flower morning-element" style="left: 50%;"></div>
+    <div class="flower morning-element" style="left: 80%;"></div>
+
+    <!-- Night elements (stars) -->
+    <div class="star star1 night-element"></div>
+    <div class="star star2 night-element"></div>
+    <div class="star star3 night-element"></div>
+    <div class="star star4 night-element"></div>
+    <div class="star star5 night-element"></div>
+    <div class="star star6 night-element"></div>
+    <div class="star star7 night-element"></div>
+</div>
+
+<div class="scene">
+    <div class="moon night-element"></div>
+</div>
+
+<script>
+    const switchElement = document.getElementById("switch");
+    const body = document.body;
+
+    // Set initial state to night mode
+    body.classList.add("night-mode");
+
+    switchElement.addEventListener("change", function() {
+        if (switchElement.checked) {
+            body.classList.add("morning-mode");
+            body.classList.remove("night-mode");
+        } else {
+            body.classList.add("night-mode");
+            body.classList.remove("morning-mode");
+        }
+    });
+</script>
+
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Day/Night Switch</title>-->
+<!--</head>-->
+<!--<style>-->
+<!--    body {-->
+<!--        margin: 0;-->
+<!--        transition: background-color 0.5s ease;-->
+<!--        background-color: #1e1e2f; /* Night mode background */-->
+<!--        color: #ffffff;-->
+<!--        overflow: hidden;-->
+<!--    }-->
+
+<!--    body.morning-mode {-->
+<!--        background-color: #87CEEB; /* Light blue morning sky */-->
+<!--        color: #000000;-->
+<!--    }-->
+
+<!--    .switch-container {-->
+<!--        position: absolute;-->
+<!--        top: 20px;-->
+<!--        left: 50%;-->
+<!--        transform: translateX(-50%);-->
+<!--    }-->
+
+<!--    .switch {-->
+<!--        display: none;-->
+<!--    }-->
+
+<!--    .toggle {-->
+<!--        width: 80px;-->
+<!--        height: 40px;-->
+<!--        background-color: #ddd;-->
+<!--        border-radius: 40px;-->
+<!--        position: relative;-->
+<!--        cursor: pointer;-->
+<!--        transition: background-color 0.3s;-->
+<!--    }-->
+
+<!--    .toggle:before {-->
+<!--        content: '';-->
+<!--        position: absolute;-->
+<!--        width: 35px;-->
+<!--        height: 35px;-->
+<!--        border-radius: 50%;-->
+<!--        background-color: #fff;-->
+<!--        top: 2.5px;-->
+<!--        left: 2.5px;-->
+<!--        transition: left 0.3s;-->
+<!--    }-->
+
+<!--    .switch:checked + .toggle {-->
+<!--        background-color: #ffd700; /* Morning switch color */-->
+<!--    }-->
+
+<!--    .switch:checked + .toggle:before {-->
+<!--        left: 42.5px; /* Move circle to right on click */-->
+<!--    }-->
+
+<!--    .toggle-text {-->
+<!--        position: absolute;-->
+<!--        top: 50%;-->
+<!--        transform: translateY(-50%);-->
+<!--        font-size: 12px;-->
+<!--        font-weight: bold;-->
+<!--        transition: opacity 0.3s;-->
+<!--    }-->
+
+<!--    .morning {-->
+<!--        left: 10px;-->
+<!--        opacity: 0;-->
+<!--    }-->
+
+<!--    .night {-->
+<!--        right: 10px;-->
+<!--        opacity: 1;-->
+<!--    }-->
+
+<!--    .switch:checked + .toggle .morning {-->
+<!--        opacity: 1;-->
+<!--    }-->
+
+<!--    .switch:checked + .toggle .night {-->
+<!--        opacity: 0;-->
+<!--    }-->
+
+<!--    /* Clouds for Morning */-->
+<!--    .cloud {-->
+<!--        position: absolute;-->
+<!--        background: #fff;-->
+<!--        border-radius: 50%;-->
+<!--        box-shadow: 0px 0px 60px 10px #fff;-->
+<!--    }-->
+
+<!--    .cloud1 {-->
+<!--        width: 120px;-->
+<!--        height: 120px;-->
+<!--        top: 20%;-->
+<!--        left: 10%;-->
+<!--        animation: moveClouds 20s linear infinite;-->
+<!--    }-->
+
+<!--    .cloud2 {-->
+<!--        width: 150px;-->
+<!--        height: 150px;-->
+<!--        top: 30%;-->
+<!--        left: 50%;-->
+<!--        animation: moveClouds 25s linear infinite;-->
+<!--    }-->
+
+<!--    .cloud3 {-->
+<!--        width: 100px;-->
+<!--        height: 100px;-->
+<!--        top: 50%;-->
+<!--        left: 80%;-->
+<!--        animation: moveClouds 30s linear infinite;-->
+<!--    }-->
+
+<!--    @keyframes moveClouds {-->
+<!--        0% {-->
+<!--            transform: translateX(0);-->
+<!--        }-->
+<!--        100% {-->
+<!--            transform: translateX(100vw);-->
+<!--        }-->
+<!--    }-->
+
+<!--    /* Stars for Night */-->
+<!--    .star {-->
+<!--        position: absolute;-->
+<!--        background: #fff;-->
+<!--        width: 5px;-->
+<!--        height: 5px;-->
+<!--        border-radius: 50%;-->
+<!--        box-shadow: 0 0 10px #fff;-->
+<!--    }-->
+
+<!--    .star1 {-->
+<!--        top: 20%;-->
+<!--        left: 30%;-->
+<!--    }-->
+
+<!--    .star2 {-->
+<!--        top: 50%;-->
+<!--        left: 60%;-->
+<!--    }-->
+
+<!--    .star3 {-->
+<!--        top: 70%;-->
+<!--        left: 40%;-->
+<!--    }-->
+
+<!--    /* Moon for Night */-->
+<!--    .moon {-->
+<!--        position: absolute;-->
+<!--        width: 80px;-->
+<!--        height: 80px;-->
+<!--        background: #f4f4f4;-->
+<!--        border-radius: 50%;-->
+<!--        top: 15%;-->
+<!--        left: 75%;-->
+<!--        box-shadow: 0 0 20px #f4f4f4;-->
+<!--    }-->
+
+<!--    .crater {-->
+<!--        position: absolute;-->
+<!--        background: #d9d9d9;-->
+<!--        border-radius: 50%;-->
+<!--        box-shadow: 0 0 5px #d9d9d9;-->
+<!--    }-->
+
+<!--    .crater1 {-->
+<!--        width: 15px;-->
+<!--        height: 15px;-->
+<!--        top: 20px;-->
+<!--        left: 20px;-->
+<!--    }-->
+
+<!--    .crater2 {-->
+<!--        width: 10px;-->
+<!--        height: 10px;-->
+<!--        top: 40px;-->
+<!--        left: 50px;-->
+<!--    }-->
+
+<!--    .crater3 {-->
+<!--        width: 7px;-->
+<!--        height: 7px;-->
+<!--        top: 60px;-->
+<!--        left: 30px;-->
+<!--    }-->
+
+<!--    /* Trees for Night */-->
+<!--    .tree {-->
+<!--        position: absolute;-->
+<!--        bottom: 0;-->
+<!--        width: 30px;-->
+<!--        height: 150px;-->
+<!--        background: #2e2e2e;-->
+<!--    }-->
+
+<!--    .tree::before {-->
+<!--        content: '';-->
+<!--        position: absolute;-->
+<!--        top: -50px;-->
+<!--        left: -40px;-->
+<!--        width: 100px;-->
+<!--        height: 100px;-->
+<!--        background: #2e2e2e;-->
+<!--        border-radius: 50%;-->
+<!--    }-->
+
+<!--    .tree1 {-->
+<!--        left: 20%;-->
+<!--    }-->
+
+<!--    .tree2 {-->
+<!--        left: 50%;-->
+<!--    }-->
+
+<!--    .tree3 {-->
+<!--        left: 80%;-->
+<!--    }-->
+
+<!--    /* Hills for Night */-->
+<!--    .hill {-->
+<!--        position: absolute;-->
+<!--        bottom: 0;-->
+<!--        width: 100%;-->
+<!--        height: 200px;-->
+<!--        background: #2e2e2e;-->
+<!--        border-radius: 50%;-->
+<!--        z-index: -1;-->
+<!--    }-->
+
+<!--    /* Hide elements by default */-->
+<!--    .morning-element,-->
+<!--    .night-element {-->
+<!--        display: none;-->
+<!--    }-->
+
+<!--    /* Show elements based on time of day */-->
+<!--    body.morning-mode .morning-element {-->
+<!--        display: block;-->
+<!--    }-->
+
+<!--    body.night-mode .night-element {-->
+<!--        display: block;-->
+<!--    }-->
+
+<!--</style>-->
+<!--<body>-->
+
+<!--<div class="switch-container">-->
+<!--    <input type="checkbox" id="switch" class="switch" />-->
+<!--    <label for="switch" class="toggle">-->
+<!--        <span class="toggle-text morning">Morning</span>-->
+<!--        <span class="toggle-text night">Night</span>-->
+<!--    </label>-->
+<!--</div>-->
+
+<!--<div class="scene">-->
+<!--    &lt;!&ndash; Morning elements (clouds, sun, grass, flowers) &ndash;&gt;-->
+<!--    <div class="cloud cloud1 morning-element"></div>-->
+<!--    <div class="cloud cloud2 morning-element"></div>-->
+<!--    <div class="cloud cloud3 morning-element"></div>-->
+<!--    <div class="sun morning-element"></div>-->
+<!--    <div class="grass morning-element"></div>-->
+<!--    <div class="flower morning-element" style="left: 20%;"></div>-->
+<!--    <div class="flower morning-element" style="left: 50%;"></div>-->
+<!--    <div class="flower morning-element" style="left: 80%;"></div>-->
+
+<!--    &lt;!&ndash; Night elements (stars, moon, trees, hills) &ndash;&gt;-->
+<!--    <div class="star star1 night-element"></div>-->
+<!--    <div class="star star2 night-element"></div>-->
+<!--    <div class="star star3 night-element"></div>-->
+<!--    <div class="moon night-element">-->
+<!--        <div class="crater crater1"></div>-->
+<!--        <div class="crater crater2"></div>-->
+<!--        <div class="crater crater3"></div>-->
+<!--    </div>-->
+<!--    <div class="hill night-element"></div>-->
+<!--    <div class="tree tree1 night-element"></div>-->
+<!--    <div class="tree tree2 night-element"></div>-->
+<!--    <div class="tree tree3 night-element"></div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    const switchElement = document.getElementById("switch");-->
+<!--    const body = document.body;-->
+
+<!--    body.classList.add("night-mode");-->
+
+<!--    switchElement.addEventListener("change", function() {-->
+<!--        if (switchElement.checked) {-->
+<!--            body.classList.add("morning-mode");-->
+<!--            body.classList.remove("night-mode");-->
+<!--        } else {-->
+<!--            body.classList.add("night-mode");-->
+<!--            body.classList.remove("morning-mode");-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
